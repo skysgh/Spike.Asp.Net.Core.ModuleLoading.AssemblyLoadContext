@@ -11,6 +11,7 @@ using Autofac.Core;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Spike.Base.Host.Services;
 using Spike.Base.Host.Services.Implementations;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Spike.ModuleLoadingAndDI
 {
@@ -36,7 +37,7 @@ namespace Spike.ModuleLoadingAndDI
             // Add services to the container.
             builder.Services.AddControllersWithViews()
            //no!!!! Fails for Modules
-           //.AddControllersAsServices()
+           .AddControllersAsServices()
            ;
             // Wire up custom Resetter invoked by upload controller.
             AddActionDescriptorChangeProvider(builder);
@@ -44,6 +45,10 @@ namespace Spike.ModuleLoadingAndDI
 
             // builder.Services.AddSingleton(typeof(IControllerActivator),
             // typeof(CustomControllerActivator));
+
+            //builder.Services.Replace(ServiceDescriptor.Transient<IControllerActivator, MyServiceBasedControllerActivator>());
+            builder.Services.Add(ServiceDescriptor.Transient<IControllerActivator, MyServiceBasedControllerActivator>());
+
 
             //That was the last chance to add anthing before Build is called:
             var app = builder.Build();
