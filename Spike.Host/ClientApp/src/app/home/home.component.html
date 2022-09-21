@@ -1,0 +1,47 @@
+
+<h5>Background</h5>
+<p>
+  Module loading is the basis of providing a 3rd party evolvable
+  ecosystem.
+  <br />
+  Except that the <code>Asp.Net Core</code> framework didn't think this was something important enough to solve for.
+  <br />
+  The issue remains that with <code>IServiceCollection</code> having made the <code>IServiceProvider</code> at startup, and the
+  <code>IServiceProvider</code> is locked off from further change...there is nowhere to register a Service
+  that became available when the new module was loaded.
+</p>
+
+
+<h5>Example Host Controllers</h5>
+<ul>
+  <li><a href="/api/exampleh1" target="_blank">H1</a> Shows accessing a Host Controller that have no DI required (of course works). </li>
+  <li><a href="/api/exampleh2" target="_blank">H2</a>  Shows accessing a Host Controller that has a Host service DI'ed (same).</li>
+</ul>
+
+
+<h5>Loader</h5>
+  As <code>Module</code> proj is <b>not</b>&nbsp;<i>Referenced</i> from <code>Host</code>,
+  F6 first to Build & push to <code>Host</code>'s <code>MODULES</code>
+  dir, so that it can be found by:
+<ul>
+  <li><a href="/api/loadmodule" target="_blank">Click <i>once</i> to late load a Module...then continue below...</a>  </li>
+</ul>
+
+
+<h5>Example Module Controller</h5>
+<ul>
+  <li><a href="/api/examplem1" target="_blank">M1</a> Shows DI of a framework service work. (works).</li>
+  <li><a href="/api/examplem2" target="_blank">M2</a> Shows DI of a previously registered Host service (works) </li>
+  <li><a href="/api/examplem3" target="_blank">M3</a> Shows DI of a new Module service (doesn't work).'</li>
+</ul>
+
+<h5>Next</h5>
+<p>
+  Further investigations might be in the direction of:
+</p>
+<ul>
+  <li>Use a Child Container when loading the Module (limits it to certain DI engines. Autofac for one. Lamar not. )</li>
+  <li>Take over the creation of Controllers (the main entry point) and provide the child container to resolve with.</li>
+  <li>There's also the issue of security to work out next. How to limit access from Module to only certain Services (API ones)?</li>
+</ul>
+
