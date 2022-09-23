@@ -1,10 +1,12 @@
 ﻿using Autofac;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.Extensions.DependencyModel;
 using Spike.Base.Host.Api.Infrastructure;
 using Spike.Base.Host.AppDomains;
 using Spike.Base.Host.AssemblyLoadContexts;
 using Spike.Base.Shared.Services;
+using Spike.DotNetCore.ILSpy._01.Services.Configuration;
 using System.Reflection;
 
 namespace Spike.Base.Host.Services.Implementations
@@ -13,6 +15,7 @@ namespace Spike.Base.Host.Services.Implementations
     {
         private readonly ApplicationPartManager _applicationPartManager;
         private readonly ILifetimeScope _lifetimeScope;
+        private readonly IPluginValidationService _pluginValidationService;
         private readonly IHostApplicationLifetime _applicationLifetime;
 
         public ScopeDictionary Scopes
@@ -24,12 +27,14 @@ namespace Spike.Base.Host.Services.Implementations
         }
 
         public ModuleLoadingService(
+            IPluginValidationService pluginValidationService,
             IHostApplicationLifetime applicationLifetime,
             ApplicationPartManager applicationPartManager,
             ILifetimeScope lifetimeScope)
         {
             _applicationPartManager = applicationPartManager;
             this._lifetimeScope = lifetimeScope;
+            this._pluginValidationService = pluginValidationService;
             _applicationLifetime = applicationLifetime;
         }
 
@@ -40,6 +45,18 @@ namespace Spike.Base.Host.Services.Implementations
             {
                 assemblyResolutionBaseDirectoryPath = Path.GetDirectoryName(assemblyFilePath);
             }
+
+            ValidationConstraintConfiguration validationConstraintConfiguration =
+                new ValidationConstraintConfiguration();
+            validationConstraintConfiguration.Excluded.Words.AddRange(new[] { "Activator", "FileStream", "FileReader", "FileWriter", "File" });
+
+            if (!_pluginValidationService.ValidateAssembly(assemblyFilePath,
+                validationConstraintConfiguration))
+            {
+                return null;
+            }
+            
+
             var loadContext = new AppModuleLoadContext(assemblyResolutionBaseDirectoryPath);
 
             //var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
@@ -50,6 +67,14 @@ namespace Spike.Base.Host.Services.Implementations
             {
                 return null;
             }
+
+            //Note that this is not working:
+            // As it can't see basic assemblies, 
+            // such as ones holding File types....
+            // :-(
+            // Maybe another AssemblyLoader is required...
+            // to iterate over assemblies and then dump?
+
 
             _applicationPartManager
                 .ApplicationParts
@@ -84,7 +109,7 @@ namespace Spike.Base.Host.Services.Implementations
 
 
                 // TODO: Primitive/improvable way to look for Services
-                var assemblyTypes = assembly.GetTypes();
+                var assemblyTypes = assembly.ExportedTypes;
                 //Search for Services first:
                 foreach (var serviceType in assemblyTypes)
                 {

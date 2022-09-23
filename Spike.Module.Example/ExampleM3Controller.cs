@@ -16,17 +16,9 @@ namespace App.Module.Example
     {
         private readonly IExampleMService _exampleMService;
 
-        // NOT GOING TO WORK
-        //public ExampleM3Controller(IExampleMService exampleMService)
-        //{
-
-        //    this.exampleMService = exampleMService;
-        //}
         public ExampleM3Controller(IExampleMService exampleMService)
         {
-
             this._exampleMService = exampleMService;
-            //this.exampleMService = new ExampleMService();
         }
 
         [HttpGet]

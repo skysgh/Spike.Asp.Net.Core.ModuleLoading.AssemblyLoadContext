@@ -15,7 +15,17 @@ namespace App.Module.Example
 
         public ExampleM1Controller(IServiceProvider sp)
         {
-            var c = sp.GetService<IServiceContainer>();
+            //Security Check
+            // Put this in and see if it picks it up:
+            //System.IO.StreamReader? sr=null;
+            //using (System.IO.FileStream fs = new FileStream(null, FileAccess.Read))
+            //{
+            //    sr = new System.IO.StreamReader(fs);
+            //}
+            //System.IO.Directory.Exists(this.GetType().Assembly.Location);
+
+
+                var c = sp.GetService<IServiceContainer>();
             
             // Appears to contain only default services.
             // as even this service doesn't show up.

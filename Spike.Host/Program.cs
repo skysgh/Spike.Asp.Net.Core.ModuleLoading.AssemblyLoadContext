@@ -33,7 +33,10 @@ namespace Spike.ModuleLoadingAndDI
 
             //Add a service
             builder.Services.AddSingleton<IExampleHService, ExampleHService>();
+
+            builder.Services.AddSingleton<IPluginValidationService, PluginValidationService>();
             builder.Services.AddSingleton<IModuleLoadingService, ModuleLoadingService>();
+           
             // Add services to the container.
             builder.Services.AddControllersWithViews()
            //no!!!! Fails for Modules

@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\Spike.Shared\Spike.Base.Shared.csproj" >
+	  <ProjectReference Include="..\Spike.Shared\Spike.Base.Shared.csproj">
 		  <Private>false</Private>
 		  <ExcludeAssets>runtime</ExcludeAssets>
 	  </ProjectReference>
