@@ -1,1 +1,11 @@
-﻿
+﻿Empty directory 
+where Spike.Modules.Example
+Builds to.
+
+Think of it as an unload location for 3rd party plugins.
+
+(haven't yet gotten around to making
+the demo work with importing 
+Nuget packages to azure blobs
+and reading from there,
+for example)

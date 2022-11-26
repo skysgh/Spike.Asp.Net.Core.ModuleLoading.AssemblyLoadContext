@@ -1,47 +1,85 @@
 
 <h5>Background</h5>
 <p>
-  Module loading is the basis of providing a 3rd party evolvable
+  Module loading is the basis of being capable of providing a 3rd party evolvable
   ecosystem.
   <br />
   Except that the <code>Asp.Net Core</code> framework didn't think this was something important enough to solve for.
   <br />
-  The issue remains that with <code>IServiceCollection</code> having made the <code>IServiceProvider</code> at startup, and the
-  <code>IServiceProvider</code> is locked off from further change...there is nowhere to register a Service
-  that became available when the new module was loaded.
+</p>
+<h5>Problem</h5>
+<p>
+  Whereas <code>IServiceCollection</code> can be populated as the source
+  for making the <code>IServiceProvider</code> at startup,
+  the <code>IServiceProvider</code> is locked off from further change...
+  there is nowhere to register a Service
+  that became available when the new plugin module was loaded.
+</p>
+<p>
+  There are two types of controllers to watch out for.
+  Web API and OData COntrollers.
 </p>
 
-
-<h5>Example Host Controllers</h5>
+<h5>Debugging</h5>
 <ul>
-  <li><a href="/api/exampleh1" target="_blank">H1</a> Shows accessing a Host Controller that have no DI required (of course works). </li>
-  <li><a href="/api/exampleh2" target="_blank">H2</a>  Shows accessing a Host Controller that has a Host service DI'ed (same).</li>
+  <li><a href="$odata" target="_blank">$OData</a>  Shows list of registered services.</li>
 </ul>
 
 
-<h5>Loader</h5>
-  As <code>Module</code> proj is <b>not</b>&nbsp;<i>Referenced</i> from <code>Host</code>,
-  F6 first to Build & push to <code>Host</code>'s <code>MODULES</code>
-  dir, so that it can be found by:
+https://localhost:7245/api/rest/base/v1/exampleh1
+<h5>Example Host Controllers</h5>
+<!-- As we're just interested in api calls, the following don't open views -->
 <ul>
-  <li><a href="/api/loadmodule" target="_blank">Click <i>once</i> to late load a Module...then continue below...</a>  </li>
+  <li><a href="/api/rest/base/v1/exampleH1" target="_blank">H1</a>  Invokes a Base Web API controller, no DI required.</li>
+  <li><a href="/api/rest/base/v1/exampleH2" target="_blank">H2</a>  Invokes a Base Web API controller, DI used.</li>
+  <li><a href="/api/odata/base/v1/exampleO1" target="_blank">O1</a>  Invokes a Base ODATA controller, DI used.</li>
+</ul>
+
+
+<h5>Module DLL Loader</h5>
+<b>Important:</b>
+  As <code>Modules.Example</code> proj
+  is <b>not</b>&nbsp;<i>Referenced</i>
+  from <code>Host</code>,
+<code>F6</code> first
+  to Build & push to
+<code>Host</code>'s
+<code>MODULES</code> direcotry,
+  so that it can be found by:
+<ul>
+  <li>
+    <a href="/api/rest/base/v1/loadmodule" target="_blank">
+      Click <i>once</i> to late load a Module...then continue below...
+    </a>
+  </li>
 </ul>
 
 
 <h5>Example Module Controller</h5>
+Once loaded... let's see:
+<!-- As we're just interested in api calls, the following don't open views -->
 <ul>
-  <li><a href="/api/examplem1" target="_blank">M1</a> Shows DI of a framework service work. (works).</li>
-  <li><a href="/api/examplem2" target="_blank">M2</a> Shows DI of a previously registered Host service (works) </li>
-  <li><a href="/api/examplem3" target="_blank">M3</a> Shows DI of a new Module service (doesn't work).'</li>
+  <li><a href="/api/rest/module/v1/examplem1" target="_blank">M1</a> Shows DI of a framework service work (works).</li>
+  <li><a href="/api/rest/module/v1/examplem2" target="_blank">M2</a> Shows DI of a previously registered Host service (works). </li>
+  <li><a href="/api/rest/module/v1/examplem3" target="_blank">M3</a> Shows DI of a new Module service (works).</li>
+  </ul>
+<i>
+  But whereas the following is working as a WebAPI,
+  it is <b>NOT</b> registered as an ODataController
+  (you can verify this in <code>~/$odata/</code>)
+  where it is listed in non-odata section...)
+</i>
+<ul>
+  <li><a href="/api/odata/module/v1/ExampleO1" target="_blank">O1</a> Shows DI of a new Module service (doesn't <b><i>really</i></b> work).</li>
 </ul>
 
 <h5>Next</h5>
 <p>
-  Further investigations might be in the direction of:
+  No idea...I'm stuck. The OData part is crucial.
 </p>
-<ul>
-  <li>Use a Child Container when loading the Module (limits it to certain DI engines. Autofac for one. Lamar not. )</li>
-  <li>Take over the creation of Controllers (the main entry point) and provide the child container to resolve with.</li>
-  <li>There's also the issue of security to work out next. How to limit access from Module to only certain Services (API ones)?</li>
-</ul>
+<p>
+  And, to be frank, the whole using of a dictionary to get to an Autofac scope seems so sketchy that
+  I'm hoping someone slaps me over the back of the head and says there is a MUCH simpler way to do the
+  same thing...
+</p>
 

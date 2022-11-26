@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using ICSharpCode.Decompiler.TypeSystem;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata;
-using Spike.Base.Host.Services;
+using App.Base.Host.Services;
 using ICSharpCode.Decompiler.Metadata;
 
-namespace Spike.Base.Host.Services.Implementations
+namespace App.Base.Host.Services.Implementations
 {
     /// <summary>
     /// Implementation of the 

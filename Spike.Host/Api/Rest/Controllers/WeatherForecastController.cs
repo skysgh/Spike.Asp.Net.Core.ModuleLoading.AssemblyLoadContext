@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using App.Base.Shared.Models;
+using App.Base.API;
 
-namespace Spike.ModuleLoadingAndDI.Controllers
+namespace App.Base.API.Rest.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route(AppAPIConstants.Areas.Base.Rest.V1.Routing.Controllers.WeatherForecast.Route)]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

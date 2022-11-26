@@ -1,28 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Spike.Base.Shared.Services;
+using App.Base.Shared.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using App.Base.API;
 
-namespace Spike.Base.Host.Controllers
+namespace App.Base.API.Rest.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ExampleH2Controller : ControllerBase
+    [Route(AppAPIConstants.Areas.Base.Rest.V1.Routing.Controllers.ExampleH2.Route)]
+    public class ExampleH2Controller : ODataController
     {
         private readonly IExampleHService exampleHService;
 
         public ExampleH2Controller(IExampleHService exampleSharedService)
         {
-            this.exampleHService = exampleSharedService;
+            exampleHService = exampleSharedService;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Content(exampleHService.Do("Host"));
+            return Content(exampleHService.Do("a Controller with a little DI used in Constructor"));
         }
     }
 }

@@ -1,19 +1,23 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Spike.Base.Host.Api.Infrastructure;
-using Spike.Base.Shared.Services;
-using Spike.Base.Shared.Services.Implementations;
+using App.Base.Shared.Services;
+using App.Base.Shared.Services.Implementations;
 using System.Reflection;
 using Autofac;
 using Grace.AspNetCore.Hosting;
 using Grace.DependencyInjection;
 using Autofac.Core;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Spike.Base.Host.Services;
-using Spike.Base.Host.Services.Implementations;
+using App.Base.Host.Services;
+using App.Base.Host.Services.Implementations;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.OData;
+using App.Base.API.OData.ModelBuilders;
+using App.Base.API;
+using App.Base.MVC.Infrastructure;
+using App.Base.MVC.Controllers;
 
-namespace Spike.ModuleLoadingAndDI
+namespace App.ModuleLoadingAndDI
 {
     public class Program
     {
@@ -26,95 +30,93 @@ namespace Spike.ModuleLoadingAndDI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-
-
+            // IMPORTANT:
+            // Replacing default DI service with Autofac
+            // as it permits child scopes...which is necessary
+            // to manage new services imported from 3rd party
+            // modules.
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            //builder.Host.UseGrace();
 
-            //Add a service
+            // Demo of registering at startup some service needed by controllers:
             builder.Services.AddSingleton<IExampleHService, ExampleHService>();
 
-            builder.Services.AddSingleton<IPluginValidationService, PluginValidationService>();
-            builder.Services.AddSingleton<IModuleLoadingService, ModuleLoadingService>();
-           
-            // Add services to the container.
-            builder.Services.AddControllersWithViews()
-           //no!!!! Fails for Modules
-           .AddControllersAsServices()
-           ;
+            RegisterServicesNeededToImport3rdPartyModulesAndTheirControllersAndServices(builder);
+
+            builder.Services
+                .AddControllersWithViews()
+                //Force this on to ensure DI works after modules are loaded
+                .AddControllersAsServices()
+                //But OData works as always:
+                .AddOData(
+                                opt =>
+                                opt.Count()
+                                .Filter()
+                                .Expand()
+                                .Select()
+                                .OrderBy()
+                                .SetMaxTop(5)
+                                //Add Base EDM:
+                                .AddRouteComponents(
+                                    AppAPIConstants.Areas.Base.OData.V1.Routing.RoutePrefix,
+                                    AppModuleBaseEdmModelBuilder.BuildModel())
+                                // This is on by default, but still...
+                                .EnableAttributeRouting = true
+                );
+
+            AddReplacementFactoryOfControllersThatIsAwareOfChildDIScopes(builder);
+
             // Wire up custom Resetter invoked by upload controller.
             AddActionDescriptorChangeProvider(builder);
 
-
-            // builder.Services.AddSingleton(typeof(IControllerActivator),
-            // typeof(CustomControllerActivator));
-
-            //builder.Services.Replace(ServiceDescriptor.Transient<IControllerActivator, MyServiceBasedControllerActivator>());
-            builder.Services.Add(ServiceDescriptor.Transient<IControllerActivator, MyServiceBasedControllerActivator>());
-
-
-            //That was the last chance to add anthing before Build is called:
+            // That was the last chance to add anthing before Build is called:
+            // =======================================================
+            // =======================================================
             var app = builder.Build();
-            //Works, no problem:
-            var x1 = app.Services.GetService<IExampleHService>();
-            // Adding additional Services after the build event:
-            // Will raise Exception
-            // Not fixable by setting the flag by refletion, as it's too late.
-            //builder.Services.GetType()
-            //    .GetProperties(
-            //    BindingFlags.Public|BindingFlags.SetProperty|BindingFlags.Instance
-            //    )
-            //    .Where(x => x.Name == "IsReadOnly")
-            //    .First()
-            //    .SetValue(builder.Services, false);
-            // Without using reflection to re-permit adding services without raising
-            // Exception "Cannot modify ServiceCollection after application is built."
-            // it's still too late (Host already built, so no longer looking at source info)
-            try
-            {
-                builder.Services.AddSingleton<ILateService, LateService>();
-            }catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            // Calling build twice also raises an exception:
-            // builder.Build();
-            // So...if we load a new DLL into a new AppDomainLoadContext,
-            // that contains a Controller
-            // that has a dependency on a Service, 
-            // how do we teach the DI (IServiceProvider) how to build
-            // it, and dependency service first???
-            
-            // Returns null - *** NOT *** what we want...: 
+            // =======================================================
+            // =======================================================
+
+            // IE: This won't work now:
+            // builder.Services.AddSingleton<ILateService, LateService>();
+            // Returns null:
             var x2 = app.Services.GetService<ILateService>();
 
-            //That too doesn't help (the Update method is obsolete).
-            //AutofacServiceProvider sp = (AutofacServiceProvider)app.Services;
-            ILifetimeScope autofacContainer = app.Services.GetAutofacRoot();
-            
-
-
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
+            if (!app.Environment.IsDevelopment()){app.UseHsts();}
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 
-
+            // Register default route for WebAPI controllers :
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller}/{action=Index}/{id?}");
+            
+            // Note that OData Routes were registered earlier
+            // than build(), as Config information.
+            // NOTE: Maybe that that will be the way to register them later...
+            // Either way, add other odata specific handling to debug:
+            // Provide the ~/$odata route:
+            app.UseODataRouteDebug();
+            app.UseODataQueryRequest();
 
+            // This page will load the Angular page:
             app.MapFallbackToFile("index.html");
 
-            app.Run ();
+            app.Run();
         }
 
+        private static void AddReplacementFactoryOfControllersThatIsAwareOfChildDIScopes(WebApplicationBuilder builder)
+        {
+            builder.Services.Add(ServiceDescriptor.Transient<IControllerActivator, AppServiceBasedControllerActivator>());
+        }
+
+        private static void RegisterServicesNeededToImport3rdPartyModulesAndTheirControllersAndServices(WebApplicationBuilder builder)
+        {
+            // Register two services needed to process the
+            // loading of 3rd party modules:
+            builder.Services.AddSingleton<IPluginValidationService, PluginValidationService>();
+            builder.Services.AddSingleton<IModuleLoadingService, ModuleLoadingService>();
+        }
 
         private static void AddActionDescriptorChangeProvider(WebApplicationBuilder builder)
         {

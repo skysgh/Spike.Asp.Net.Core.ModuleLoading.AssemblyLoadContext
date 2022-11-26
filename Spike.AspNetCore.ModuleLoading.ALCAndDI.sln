@@ -3,15 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spike.Base.Host", "Spike.Host\Spike.Base.Host.csproj", "{681792D6-87B0-42A4-A835-D238E8BA622E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spike.Base.Host", "Spike.Host\Spike.Base.Host.csproj", "{681792D6-87B0-42A4-A835-D238E8BA622E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spike.Base.Shared", "Spike.Shared\Spike.Base.Shared.csproj", "{0E0DB4D3-19B1-4FA5-BA71-668FE93829B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spike.Base.Shared", "Spike.Shared\Spike.Base.Shared.csproj", "{0E0DB4D3-19B1-4FA5-BA71-668FE93829B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spike.Module.Example", "Spike.Module.Example\Spike.Module.Example.csproj", "{BE5DBB03-F34D-44C0-8953-0049210E81AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spike.Modules.Example", "Spike.Module.Example\Spike.Modules.Example.csproj", "{BE5DBB03-F34D-44C0-8953-0049210E81AD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MODULES", "MODULES", "{5EACC519-C6C6-4AC8-9436-348136233D13}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "11.MODULES", "11.MODULES", "{5EACC519-C6C6-4AC8-9436-348136233D13}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BASE", "BASE", "{00B69C4D-1EBC-4C70-875B-65596BA42087}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01.BASE", "01.BASE", "{00B69C4D-1EBC-4C70-875B-65596BA42087}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00.DOCUMENTATION", "00.DOCUMENTATION", "{AF9DC774-B2ED-4906-AEC3-7A58085849FA}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

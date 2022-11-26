@@ -1,7 +1,7 @@
-﻿using Spike.Base.Host.AssemblyLoadContexts;
+﻿using App.Base.DI;
 using System.Reflection;
 
-namespace Spike.Base.Host.Services
+namespace App.Base.Host.Services
 {
     public interface IModuleLoadingService
     {

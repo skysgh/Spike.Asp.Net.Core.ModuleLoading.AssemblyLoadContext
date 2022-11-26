@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Spike.Base.Shared.Services
+﻿
+namespace App.Base.Shared.Services
 {
+    /// <summary>
+    /// Contract for 
+    /// a Service to show
+    /// that Services can't be registered after app.Build() 
+    /// :-(
+    /// </summary>
     public interface ILateService
     {
         string Do();

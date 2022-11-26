@@ -4,8 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spike.Base.Shared.Services.Implementations
+namespace App.Base.Shared.Services.Implementations
 {
+    /// <summary>
+    /// Implementation of 
+    /// a Service to show
+    /// that Services can't be registered after app.Build() 
+    /// :-(
+    /// </summary>
     public class LateService : ILateService
     {
         private readonly IExampleHService exampleMService;

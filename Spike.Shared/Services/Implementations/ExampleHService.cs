@@ -1,7 +1,12 @@
-﻿using Spike.Base.Shared.Services;
+﻿using App.Base.Shared.Services;
 
-namespace Spike.Base.Shared.Services.Implementations
+namespace App.Base.Shared.Services.Implementations
 {
+    /// <summary>
+    // Implementation of
+    // a Service registered at startup
+    // and injected into Controllers
+    /// </summary>
     public class ExampleHService : IExampleHService
     {
         public string Do(string sourceInfo)

@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Spike.Base.Shared.Services.Implementations;
+using App.Base.Shared.Services.Implementations;
+using App.Base.API;
 
-namespace Spike.Base.Host.Controllers
+namespace App.Base.API.Rest.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route(AppAPIConstants.Areas.Base.Rest.V1.Routing.Controllers.ExampleH1.Route)]
     public class ExampleH1Controller : ControllerBase
     {
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Content("Hello World.");
+            return Content("Hello World (from a Controller without need of DI in Constructor).");
         }
 
     }

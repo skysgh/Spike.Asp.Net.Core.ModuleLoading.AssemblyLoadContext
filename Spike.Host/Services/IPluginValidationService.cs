@@ -1,11 +1,6 @@
 ﻿using Spike.DotNetCore.ILSpy._01.Services.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Spike.Base.Host.Services
+namespace App.Base.Host.Services
 {
     /// <summary>
     /// Service to validate a plugin

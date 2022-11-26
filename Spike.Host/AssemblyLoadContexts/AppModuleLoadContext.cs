@@ -6,7 +6,7 @@ using System.Runtime.Loader;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spike.Base.Host.AppDomains
+namespace App.Base.Host.AppDomains
 {
 
     /// <summary>

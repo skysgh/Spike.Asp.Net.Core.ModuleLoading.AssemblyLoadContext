@@ -1,35 +1,23 @@
 ﻿using Autofac;
 using Autofac.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Spike.Base.Host.Api.Infrastructure;
-using Spike.Base.Host.AppDomains;
-using Spike.Base.Host.AssemblyLoadContexts;
-using Spike.Base.Host.Services;
-using Spike.Base.Shared.Services;
-using System.ComponentModel.Design;
+using App.Base.Host.Services;
 using System.Reflection;
-using System.Runtime.Loader;
-using System.Text;
+using App.Base.API;
 
-namespace Spike.Base.Host.Api.Rest.Controllers
+namespace App.Base.API.Rest.Controllers
 {
     /// <summary>
     /// 
     /// </summary>
-    [Route("api/[controller]")]
+    [Route(AppAPIConstants.Areas.Base.Rest.V1.Routing.Controllers.LoadModule.Route)]
     [ApiController]
     public class LoadModuleController : ControllerBase
     {
         private readonly IModuleLoadingService _moduleLoadingService;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="applicationPartManager"></param>
         public LoadModuleController(IModuleLoadingService _moduleLoadingService)
         {
-            
             this._moduleLoadingService = _moduleLoadingService;
         }
 
@@ -45,14 +33,17 @@ namespace Spike.Base.Host.Api.Rest.Controllers
                     Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location),
                     "../../../MODULES/");
 
-            var sourceDir = 
-                Path.Combine(discoveryRootDir, "bin/Debug/Net6.0/");
+            var sourceDir =
+                Path.Combine(discoveryRootDir, "bin/Debug/Net7.0/");
 
+            // Note that I've renamed the assembly (so doesn't match project name):
             string assemblyPath =
-                Path.Combine(sourceDir, "Spike.Module.Example.dll");
+                Path.Combine(sourceDir, "App.Modules.Example.dll");
+
+            bool exits = Path.Exists(assemblyPath);
 
             return _moduleLoadingService.Load(assemblyPath, discoveryRootDir) != null
-                ? Content("Module Assembly loaded :-)")
+                ? Content("Module Assembly loaded :-)...Now try invoking the new services...")
                 : Content("Module Assembly NOT loaded :-(");
         }
 
